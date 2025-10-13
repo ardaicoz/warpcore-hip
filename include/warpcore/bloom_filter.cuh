@@ -176,7 +176,7 @@ public:
         slot_type slot = 0;
         for(index_type k = 0; k < k_; k++)
         {
-            const key_type seeded_key = key + seed_ + k;
+            const key_type seeded_key = key + seed_ + k + 1;
             const slot_type hash = Hasher::hash(seeded_key) % block_bits();
 
             if((hash / slot_bits()) == group.thread_rank())
@@ -224,7 +224,7 @@ public:
         slot_type slot = 0;
         for(index_type k = 0; k < k_; k++)
         {
-            const key_type seeded_key = key + seed_ + k;
+            const key_type seeded_key = key + seed_ + k + 1;
             const slot_type hash = Hasher::hash(seeded_key) % block_bits();
 
             if((hash / slot_bits()) == group.thread_rank())
@@ -275,7 +275,7 @@ public:
         slot_type slot = slot_type{0};
         for(index_type k = 0; k < k_; k++)
         {
-            const key_type seeded_key = key + seed_ + k;
+            const key_type seeded_key = key + seed_ + k + 1;
             const slot_type hash = Hasher::hash(seeded_key) % block_bits();
 
             if((hash / slot_bits()) == group.thread_rank())
