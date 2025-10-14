@@ -1,6 +1,9 @@
 #ifndef WARPCORE_BLOOM_FILTER_CUH
 #define WARPCORE_BLOOM_FILTER_CUH
 
+#include <thrust/transform_reduce.h>
+#include <thrust/execution_policy.h>
+#include <thrust/iterator/counting_iterator.h>
 #include "base.cuh"
 
 namespace warpcore
@@ -341,16 +344,20 @@ public:
     HOSTQUALIFIER INLINEQUALIFIER
     double fpr(const index_type n) const noexcept
     {
-        double res = 0.0;
         const double b = num_bits_ / block_bits();
+        const index_type num_iterations = 5*n/(num_bits_ / block_bits());
 
-        #pragma omp parallel for reduction(+:res)
-        for(index_type i = 0; i < 5*n/(num_bits_ / block_bits()); ++i)
-        {
-            res += binom(n, i, 1.0/b) * fpr_base(num_bits_/b, i, k_);
-        }
-
-        return res;
+        // Use Thrust for parallel computation on host
+        return thrust::transform_reduce(
+            thrust::host,
+            thrust::counting_iterator<index_type>(0),
+            thrust::counting_iterator<index_type>(num_iterations),
+            [=](index_type i) {
+                return binom(n, i, 1.0/b) * fpr_base(num_bits_/b, i, k_);
+            },
+            0.0,
+            thrust::plus<double>()
+        );
     }
 
     /*! \brief indicates if this object is a shallow copy

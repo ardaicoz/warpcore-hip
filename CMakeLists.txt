@@ -46,7 +46,6 @@ endif()
 # - find packages we depend on --------------------------------------------------------------------
 
 find_package(CUDAToolkit 11.2 REQUIRED)
-find_package(OpenMP REQUIRED)
 
 # package manager
 include(cmake/CPM.cmake)
@@ -76,7 +75,7 @@ add_library(warpcore INTERFACE)
 target_include_directories(warpcore INTERFACE
                            "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
                            $<INSTALL_INTERFACE:include>)
-target_link_libraries(warpcore INTERFACE helpers kiss_rng CUDA::cudart OpenMP::OpenMP_CXX)
+target_link_libraries(warpcore INTERFACE helpers kiss_rng CUDA::cudart)
 
 ###################################################################################################
 # - build options ---------------------------------------------------------------------------------
