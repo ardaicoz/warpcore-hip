@@ -7,11 +7,14 @@ endif()
 
 # Use environment variables for compilers if set, otherwise use defaults
 # This must be done before the project() call
-if(DEFINED ENV{CC} AND NOT "$ENV{CC}" STREQUAL "")
-    set(CMAKE_C_COMPILER $ENV{CC})
-endif()
-if(DEFINED ENV{CXX} AND NOT "$ENV{CXX}" STREQUAL "")
-    set(CMAKE_CXX_COMPILER $ENV{CXX})
+# Only set compilers if this is the top-level project
+if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
+    if(DEFINED ENV{CC} AND NOT "$ENV{CC}" STREQUAL "")
+        set(CMAKE_C_COMPILER $ENV{CC})
+    endif()
+    if(DEFINED ENV{CXX} AND NOT "$ENV{CXX}" STREQUAL "")
+        set(CMAKE_CXX_COMPILER $ENV{CXX})
+    endif()
 endif()
 
 project(warpcore VERSION 0.0.1 LANGUAGES CXX CUDA)
@@ -43,6 +46,7 @@ endif()
 # - find packages we depend on --------------------------------------------------------------------
 
 find_package(CUDAToolkit 11.2 REQUIRED)
+find_package(OpenMP REQUIRED)
 
 # package manager
 include(cmake/CPM.cmake)
@@ -72,7 +76,7 @@ add_library(warpcore INTERFACE)
 target_include_directories(warpcore INTERFACE
                            "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
                            $<INSTALL_INTERFACE:include>)
-target_link_libraries(warpcore INTERFACE helpers kiss_rng CUDA::cudart)
+target_link_libraries(warpcore INTERFACE helpers kiss_rng CUDA::cudart OpenMP::OpenMP_CXX)
 
 ###################################################################################################
 # - build options ---------------------------------------------------------------------------------
