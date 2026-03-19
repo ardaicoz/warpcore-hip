@@ -79,6 +79,7 @@ option(WARPCORE_BUILD_BENCHMARKS "Configure CMake to build benchmarks" OFF)
 option(WARPCORE_BUILD_EXAMPLES "Configure CMake to build examples" OFF)
 
 if(WARPCORE_BUILD_TESTS)
+    enable_testing()
     add_subdirectory(tests)
 endif(WARPCORE_BUILD_TESTS)
 
