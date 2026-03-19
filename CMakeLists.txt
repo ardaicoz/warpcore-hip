@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.18 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.21 FATAL_ERROR)
 
 # Set policy for FetchContent timestamps
 if(POLICY CMP0135)
@@ -15,9 +15,12 @@ if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
     if(DEFINED ENV{CXX} AND NOT "$ENV{CXX}" STREQUAL "")
         set(CMAKE_CXX_COMPILER $ENV{CXX})
     endif()
+    if(DEFINED ENV{HIPCXX} AND NOT "$ENV{HIPCXX}" STREQUAL "")
+        set(CMAKE_HIP_COMPILER $ENV{HIPCXX})
+    endif()
 endif()
 
-project(warpcore VERSION 0.0.1 LANGUAGES CXX CUDA)
+project(warpcore VERSION 0.0.1 LANGUAGES CXX HIP)
 
 ###################################################################################################
 # - build type ------------------------------------------------------------------------------------
@@ -33,40 +36,18 @@ if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
 endif()
 
 ###################################################################################################
-# Auto-detect available GPU compute architectures
-
-set(GPU_ARCHS "" CACHE STRING "List of GPU architectures (semicolon-separated) to be compiled for. Empty string means to auto-detect the GPUs on the current system")
-
-if("${GPU_ARCHS}" STREQUAL "")
-  include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/EvalGpuArchs.cmake)
-  evaluate_gpu_archs(GPU_ARCHS)
-endif()
-
-###################################################################################################
 # - find packages we depend on --------------------------------------------------------------------
 
-find_package(CUDAToolkit 11.2 REQUIRED)
+find_package(hip REQUIRED CONFIG)
+find_package(rocprim REQUIRED CONFIG)
+find_package(rocthrust REQUIRED CONFIG)
+find_package(hipcub REQUIRED CONFIG)
 
 # package manager
 include(cmake/CPM.cmake)
 
 # macro for configuring executables
 include(cmake/ConfigureExecutable.cmake)
-
-# timers, utils, etc.
-# TODO switch to default branch once merged
-CPMAddPackage(
-  NAME helpers
-  URL https://gitlab.rlp.net/pararch/hpc_helpers/-/archive/restructure/hpc_helpers-restructure.zip
-  DOWNLOAD_EXTRACT_TIMESTAMP ON
-)
-
-# lightweight GPU RNG
-CPMAddPackage(
-  NAME kiss_rng
-  URL https://github.com/sleeepyjack/kiss_rng/archive/refs/heads/master.zip
-  DOWNLOAD_EXTRACT_TIMESTAMP ON
-)
 
 ###################################################################################################
 # - warpcore target   -----------------------------------------------------------------------------
@@ -75,7 +56,8 @@ add_library(warpcore INTERFACE)
 target_include_directories(warpcore INTERFACE
                            "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
                            $<INSTALL_INTERFACE:include>)
-target_link_libraries(warpcore INTERFACE helpers kiss_rng CUDA::cudart)
+target_link_libraries(warpcore INTERFACE hip::host roc::rocprim roc::rocthrust hip::hipcub)
+target_compile_features(warpcore INTERFACE cxx_std_17)
 
 ###################################################################################################
 # - build options ---------------------------------------------------------------------------------
@@ -84,11 +66,9 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-set(CMAKE_CUDA_STANDARD 17)
-set(CMAKE_CUDA_STANDARD_REQUIRED ON)
-set(CMAKE_CUDA_EXTENSIONS OFF)
-
-set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} --expt-extended-lambda --expt-relaxed-constexpr")
+set(CMAKE_HIP_STANDARD 17)
+set(CMAKE_HIP_STANDARD_REQUIRED ON)
+set(CMAKE_HIP_EXTENSIONS OFF)
 
 set(WARPCORE_TESTS_BINARY_DIR "${CMAKE_BINARY_DIR}/tests")
 set(WARPCORE_BENCHMARKS_BINARY_DIR "${CMAKE_BINARY_DIR}/benchmarks")

@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.18 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.21 FATAL_ERROR)
 
 # Set policy for FetchContent timestamps
 if(POLICY CMP0135)
@@ -18,22 +18,18 @@ if(Catch2_ADDED)
 endif()
 
 function(ConfigureTest TEST_NAME)
+    set_source_files_properties(${ARGN} PROPERTIES LANGUAGE HIP)
     add_executable(${TEST_NAME} ${ARGN})
-    target_link_libraries(${TEST_NAME} PRIVATE Catch2::Catch2WithMain warpcore CUDA::cudart)
+    target_link_libraries(${TEST_NAME} PRIVATE Catch2::Catch2WithMain warpcore)
     target_include_directories(${TEST_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
     set_target_properties(${TEST_NAME} PROPERTIES
                                        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/tests")
-    target_compile_options(${TEST_NAME} PRIVATE --compiler-options=-Wall --compiler-options=-Wextra
-      --compiler-options=-Werror -Wno-deprecated-gpu-targets --expt-extended-lambda)
-    # Add GCC-specific warning suppression only for GCC
-    if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-      target_compile_options(${TEST_NAME} PRIVATE -Xcompiler -Wno-subobject-linkage)
-    endif()
+    target_compile_options(${TEST_NAME} PRIVATE -Wall -Wextra -Werror)
     catch_discover_tests(${TEST_NAME} EXTRA_ARGS --allow-running-no-tests)
 endfunction(ConfigureTest)
 
 ConfigureTest(tester
-  src/key_value_store_test.cu
-  src/status_test.cu
-  src/single_value_hash_table_test.cu
-  src/probing_schemes_test.cu)
+  src/key_value_store_test.hip.cpp
+  src/status_test.hip.cpp
+  src/single_value_hash_table_test.hip.cpp
+  src/probing_schemes_test.hip.cpp)
