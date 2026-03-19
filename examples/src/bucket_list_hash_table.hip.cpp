@@ -192,7 +192,9 @@ int main ()
 
             if(upper - lower != size_values_per_key)
             {
-                printf("ERROR size values %llu\n", upper - lower);
+                printf(
+                    "ERROR size values %llu\n",
+                    static_cast<unsigned long long>(upper - lower));
             }
 
             for (index_t i = lower; i < upper; i++)

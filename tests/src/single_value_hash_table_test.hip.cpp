@@ -1,16 +1,24 @@
 #include <catch2/catch_all.hpp>
 #include <warpcore/single_value_hash_table.hpp>
 
-TEMPLATE_TEST_CASE_SIG(
+template<class K, class V>
+struct single_value_case
+{
+    using key_type = K;
+    using value_type = V;
+};
+
+TEMPLATE_TEST_CASE(
     "SingleValueHashTable",
     "[singlevalue][hashtable][template]",
-    ((class Key, class Value), Key, Value),
-    (std::uint32_t, std::uint32_t),
-    (std::uint32_t, std::uint64_t),
-    (std::uint64_t, std::uint32_t),
-    (std::uint64_t, double))
+    single_value_case<std::uint32_t, std::uint32_t>,
+    single_value_case<std::uint32_t, std::uint64_t>,
+    single_value_case<std::uint64_t, std::uint32_t>,
+    single_value_case<std::uint64_t, double>)
 {
     using namespace warpcore;
+    using Key = typename TestType::key_type;
+    using Value = typename TestType::value_type;
 
     using probing_scheme_t = defaults::probing_scheme_t<Key, 8>;
 
@@ -142,7 +150,7 @@ TEMPLATE_TEST_CASE_SIG(
         *num_elems = 0;
 
         hash_table.for_each(
-            [=] DEVICEQUALIFIER (Key key, const Value& value)
+            [=] DEVICEQUALIFIER (Key key, const Value&)
             {
                 if(hash_table_t::is_valid_key(key))
                 {

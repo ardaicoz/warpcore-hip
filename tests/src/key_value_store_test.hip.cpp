@@ -1,14 +1,22 @@
 #include <catch2/catch_all.hpp>
 #include <warpcore/base.hpp>
 
-TEMPLATE_TEST_CASE_SIG(
+template<class K, class V>
+struct key_value_case
+{
+    using key_type = K;
+    using value_type = V;
+};
+
+TEMPLATE_TEST_CASE(
     "SoAStore",
     "[storage][soa][template]",
-    ((class Key, class Value), Key, Value),
-    (std::uint32_t, std::uint32_t),
-    (std::uint32_t, float))
+    key_value_case<std::uint32_t, std::uint32_t>,
+    key_value_case<std::uint32_t, float>)
 {
     using namespace warpcore;
+    using Key = typename TestType::key_type;
+    using Value = typename TestType::value_type;
 
     using storage_t = storage::key_value::SoAStore<Key, Value>;
 
@@ -160,14 +168,15 @@ TEMPLATE_TEST_CASE_SIG(
     }
 }
 
-TEMPLATE_TEST_CASE_SIG(
+TEMPLATE_TEST_CASE(
     "AoSStore",
     "[storage][aos][template]",
-    ((class Key, class Value), Key, Value),
-    (std::uint32_t, std::uint32_t),
-    (std::uint32_t, float))
+    key_value_case<std::uint32_t, std::uint32_t>,
+    key_value_case<std::uint32_t, float>)
 {
     using namespace warpcore;
+    using Key = typename TestType::key_type;
+    using Value = typename TestType::value_type;
 
     using storage_t = storage::key_value::AoSStore<Key, Value>;
 

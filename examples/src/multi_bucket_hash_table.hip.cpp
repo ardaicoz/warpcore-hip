@@ -203,14 +203,20 @@ int main ()
 
             if(upper - lower != max_values_per_key)
             {
-                printf("ERROR size values %llu (expected %llu)\n", upper - lower, max_values_per_key);
+                printf(
+                    "ERROR size values %llu (expected %llu)\n",
+                    static_cast<unsigned long long>(upper - lower),
+                    static_cast<unsigned long long>(max_values_per_key));
             }
 
             for (index_t i = lower; i < upper; i++)
             {
                 if(values_out_d[i] != key)
                 {
-                    printf("ERROR expected %u got %llu\n", key, values_out_d[i]);
+                    printf(
+                        "ERROR expected %u got %llu\n",
+                        key,
+                        static_cast<unsigned long long>(values_out_d[i]));
                 }
             }
         }
