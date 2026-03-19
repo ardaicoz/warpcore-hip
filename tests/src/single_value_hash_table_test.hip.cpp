@@ -8,13 +8,18 @@ struct single_value_case
     using value_type = V;
 };
 
+using single_value_case_u32_u32 = single_value_case<std::uint32_t, std::uint32_t>;
+using single_value_case_u32_u64 = single_value_case<std::uint32_t, std::uint64_t>;
+using single_value_case_u64_u32 = single_value_case<std::uint64_t, std::uint32_t>;
+using single_value_case_u64_f64 = single_value_case<std::uint64_t, double>;
+
 TEMPLATE_TEST_CASE(
     "SingleValueHashTable",
     "[singlevalue][hashtable][template]",
-    single_value_case<std::uint32_t, std::uint32_t>,
-    single_value_case<std::uint32_t, std::uint64_t>,
-    single_value_case<std::uint64_t, std::uint32_t>,
-    single_value_case<std::uint64_t, double>)
+    single_value_case_u32_u32,
+    single_value_case_u32_u64,
+    single_value_case_u64_u32,
+    single_value_case_u64_f64)
 {
     using namespace warpcore;
     using Key = typename TestType::key_type;

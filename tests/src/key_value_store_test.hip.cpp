@@ -8,11 +8,14 @@ struct key_value_case
     using value_type = V;
 };
 
+using key_value_case_u32_u32 = key_value_case<std::uint32_t, std::uint32_t>;
+using key_value_case_u32_f32 = key_value_case<std::uint32_t, float>;
+
 TEMPLATE_TEST_CASE(
     "SoAStore",
     "[storage][soa][template]",
-    key_value_case<std::uint32_t, std::uint32_t>,
-    key_value_case<std::uint32_t, float>)
+    key_value_case_u32_u32,
+    key_value_case_u32_f32)
 {
     using namespace warpcore;
     using Key = typename TestType::key_type;
@@ -171,8 +174,8 @@ TEMPLATE_TEST_CASE(
 TEMPLATE_TEST_CASE(
     "AoSStore",
     "[storage][aos][template]",
-    key_value_case<std::uint32_t, std::uint32_t>,
-    key_value_case<std::uint32_t, float>)
+    key_value_case_u32_u32,
+    key_value_case_u32_f32)
 {
     using namespace warpcore;
     using Key = typename TestType::key_type;
