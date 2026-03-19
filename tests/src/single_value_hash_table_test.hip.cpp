@@ -151,7 +151,7 @@ TEMPLATE_TEST_CASE(
     SECTION("for each")
     {
         std::uint64_t * num_elems = nullptr;
-        hipMallocManaged(&num_elems, sizeof(std::uint64_t));
+        hipMallocManaged(&num_elems, sizeof(std::uint64_t)); HIPERR
         *num_elems = 0;
 
         hash_table.for_each(
@@ -163,7 +163,12 @@ TEMPLATE_TEST_CASE(
                 }
             });
 
-        CHECK(*num_elems == hash_table.size());
+        hipDeviceSynchronize(); HIPERR
+
+        const auto table_size = hash_table.size();
+        CHECK(*num_elems == table_size);
+
+        hipFree(num_elems); HIPERR
     }
 
     hipFree(keys_in_d);
