@@ -240,7 +240,8 @@ public:
             {
                 bool key_collision = false;
 
-                const auto leader = detail::first_set_bit(empty_mask);
+                const auto leader =
+                    static_cast<unsigned int>(detail::first_set_bit(empty_mask));
 
                 if(group.thread_rank() == leader)
                 {

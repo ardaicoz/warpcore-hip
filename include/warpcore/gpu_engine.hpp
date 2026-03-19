@@ -77,7 +77,8 @@ void for_each_unique_key(
 
                 if(group.any(hit))
                 {
-                    const auto leader = detail::first_set_bit(hit_mask);
+                    const auto leader =
+                        static_cast<unsigned int>(detail::first_set_bit(hit_mask));
 
                     // check if search_key is the first entry for this key
                     if(group.thread_rank() == leader && i == gid)

@@ -289,7 +289,8 @@ public:
 
             if(hit_mask)
             {
-                const auto leader = detail::first_set_bit(hit_mask);
+                const auto leader =
+                    static_cast<unsigned int>(detail::first_set_bit(hit_mask));
                 value_out = table_[group.shfl(i, leader)].value;
 
                 return status_type::none();
@@ -446,7 +447,8 @@ public:
 
             if(hit_mask)
             {
-                const auto leader = detail::first_set_bit(hit_mask);
+                const auto leader =
+                    static_cast<unsigned int>(detail::first_set_bit(hit_mask));
 
                 if(group.thread_rank() == leader)
                 {
@@ -767,7 +769,8 @@ private:
                 status_->atomic_join(status_type::duplicate_key());
                 status_out = status_type::duplicate_key();
 
-                const auto leader = detail::first_set_bit(hit_mask);
+                const auto leader =
+                    static_cast<unsigned int>(detail::first_set_bit(hit_mask));
                 const auto leader_index = group.shfl(i, leader);
                 return &(table_[leader_index].value);
             }
@@ -780,7 +783,8 @@ private:
 
             while(empty_mask)
             {
-                const auto leader = detail::first_set_bit(empty_mask);
+                const auto leader =
+                    static_cast<unsigned int>(detail::first_set_bit(empty_mask));
 
                 if(group.thread_rank() == leader)
                 {

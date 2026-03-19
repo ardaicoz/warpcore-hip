@@ -333,7 +333,8 @@ private:
 
             while(empty_value_mask)
             {
-                const auto leader = detail::first_set_bit(empty_value_mask);
+                const auto leader =
+                    static_cast<unsigned int>(detail::first_set_bit(empty_value_mask));
 
                 if(group.thread_rank() == leader)
                 {
@@ -451,7 +452,8 @@ public:
                 bool success = false;
                 bool key_collision = false;
 
-                const auto leader = detail::first_set_bit(empty_key_mask);
+                const auto leader =
+                    static_cast<unsigned int>(detail::first_set_bit(empty_key_mask));
 
                 if(group.thread_rank() == leader)
                 {
