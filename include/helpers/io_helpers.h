@@ -10,6 +10,11 @@
 namespace helpers
 {
 
+inline constexpr float B2MB(const std::size_t bytes) noexcept
+{
+    return static_cast<float>(bytes) / (1024.0f * 1024.0f);
+}
+
 template<class T>
 std::vector<T> load_binary(
     const char* const file_name,

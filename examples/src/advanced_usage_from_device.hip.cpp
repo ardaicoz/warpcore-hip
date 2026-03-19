@@ -34,7 +34,7 @@ __global__ void filter_and_count(
     // flag which specifies whether an input key is unique or not
     bool key_not_unique = false;
     // CG mask which shows which threads hold non-unique keys
-    detail::lane_mask_t not_unique_mask = 0;
+    warpcore::detail::lane_mask_t not_unique_mask = 0;
 
     // check for array bounds
     if(tid < size_keys)
@@ -49,19 +49,19 @@ __global__ void filter_and_count(
 
     // compute the mask of all active threads (i.e. with non-unique keys)
     // in the cooperative group
-    not_unique_mask = detail::ballot_mask(ht_group, key_not_unique);
+    not_unique_mask = warpcore::detail::ballot_mask(ht_group, key_not_unique);
 
     // for each non-unique key in the CG
     while(not_unique_mask)
     {
         // elect one thread as the leader
-        const auto leader = detail::first_set_bit(not_unique_mask);
+        const auto leader = warpcore::detail::first_set_bit(not_unique_mask);
         // broadcast the key of the leader to all threads in the CG
         const auto filtered_key = ht_group.shfl(key, leader);
         // insert the key into the counting hash table using the CG
         hash_table.insert(filtered_key, ht_group);
         // remove the leader from the mask
-        not_unique_mask = detail::clear_lane(not_unique_mask, leader);
+        not_unique_mask = warpcore::detail::clear_lane(not_unique_mask, leader);
     }
 }
 

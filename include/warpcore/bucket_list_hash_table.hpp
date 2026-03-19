@@ -108,11 +108,11 @@ public:
         const key_type seed = defaults::seed<key_type>(),
         const float grow_factor = 1.1,
         const index_type min_bucket_size = 1,
-        const index_type max_bucket_size = max_bucket_size(),
+        const index_type max_bucket_size_in = max_bucket_size(),
         const index_type max_values_per_key = handle_type::max_value_count(),
         const bool no_init = false) noexcept :
         hash_table_(key_capacity, seed, true),
-        value_store_(value_capacity, grow_factor, min_bucket_size, max_bucket_size),
+        value_store_(value_capacity, grow_factor, min_bucket_size, max_bucket_size_in),
         max_values_per_key_(std::min(max_values_per_key, handle_type::max_value_count())),
         is_copy_(false)
     {

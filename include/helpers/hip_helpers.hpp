@@ -25,6 +25,7 @@
 
 inline constexpr hipMemcpyKind H2D = hipMemcpyHostToDevice;
 inline constexpr hipMemcpyKind D2H = hipMemcpyDeviceToHost;
+inline constexpr hipMemcpyKind D2D = hipMemcpyDeviceToDevice;
 
 namespace helpers
 {
@@ -89,6 +90,6 @@ inline std::size_t available_gpu_memory() noexcept
 } // namespace helpers
 
 #define HIP_CHECK(expr) ::helpers::check_hip((expr), #expr, __FILE__, __LINE__)
-#define HIPERR ::helpers::check_last_hip_error(__FILE__, __LINE__)
+#define HIPERR ::helpers::check_last_hip_error(__FILE__, __LINE__);
 
 #endif /* HELPERS_HIP_HELPERS_HPP */

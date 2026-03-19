@@ -6,4 +6,5 @@ function(ConfigureExecutable EXE_NAME EXE_SRC EXE_DEST)
     target_include_directories(${EXE_NAME} PRIVATE
                                              "${CMAKE_CURRENT_SOURCE_DIR}")
     target_link_libraries(${EXE_NAME} PRIVATE warpcore)
+    target_compile_options(${EXE_NAME} PRIVATE -Wno-unused-value)
 endfunction(ConfigureExecutable)

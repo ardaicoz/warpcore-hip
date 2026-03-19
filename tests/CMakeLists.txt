@@ -24,7 +24,7 @@ function(ConfigureTest TEST_NAME)
     target_include_directories(${TEST_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
     set_target_properties(${TEST_NAME} PROPERTIES
                                        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/tests")
-    target_compile_options(${TEST_NAME} PRIVATE -Wall -Wextra -Werror)
+    target_compile_options(${TEST_NAME} PRIVATE -Wall -Wextra -Werror -Wno-unused-value)
     catch_discover_tests(${TEST_NAME} EXTRA_ARGS --allow-running-no-tests)
 endfunction(ConfigureTest)
 
